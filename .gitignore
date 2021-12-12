@@ -1,3 +1,8 @@
+# project specific
+DataCompressed/
+DataDecompressed/
+Results/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
