@@ -5,13 +5,13 @@ Created on Mon Dec 30 17:36:21 2019
 @author: balmai
 """
 
-'Select a country (Capital english)'
-'################################################'
+# Select a country (Capital english)
+################################################
 
 country = 'FRANCE'
 
-'External packages'
-'################################################'
+# External packages
+################################################
 
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -33,8 +33,8 @@ import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 
-'Set Directories'
-'################################################'
+# Set Directories
+################################################
 
 working_directory = 'C:\\Users\\Ismail\\OneDrive\\Code\\Github\\Python\\ClimaTact'
 data_path = working_directory + '\\DataCompressed'
@@ -46,14 +46,14 @@ country_results_path = results_path + country + '\\'
 
 os.chdir(working_directory)
 
-'Internal packages'
-'################################################'
+# Internal packages
+################################################
 
 import Services.DataEdit as dataedit
 import Services.Zip as zip
 
-'Create result folders'
-'################################################'
+# Create result folders
+################################################
 
 if 'Results' not in os.listdir(working_directory):
     os.mkdir(results_path)
@@ -66,8 +66,8 @@ if 'Last5Years' not in os.listdir(country_results_path):
     os.mkdir(country_results_path + '\\Last5Years')
     os.mkdir(country_results_path + '\\Last5Years\\Top5')
 
-'Read country and station id'
-'################################################'
+# Read country and station id
+################################################
 
 countries = dataedit.read_country_code(countries_path)
 stations = dataedit.read_station_id(ids_path, countries)
@@ -76,8 +76,8 @@ country_station_dico = stations[["USAF", "STATION NAME"]].loc[stations["CTRY"] =
 country_stations = {country_station_dico[key]['USAF']: country_station_dico[key]['STATION NAME'] for key in
                     country_station_dico}
 
-'Big ass result dataframe'
-'################################################'
+# Big ass result dataframe
+################################################
 
 result_df = pd.DataFrame(index=country_stations.values(),
                          columns=['2050HottestDay', '2050MaxTemp', '2050Temp', '2050MinTemp', '2050ColdestDay'
@@ -88,8 +88,8 @@ result_df = pd.DataFrame(index=country_stations.values(),
                              , 'RainRise', 'RainyDaysRise', 'MaxRainRise', 'HistMaxRainInADay'
                              , 'StartTemp', 'EndTemp', 'StartRain', 'EndRain'], dtype=float)
 
-'Decompress data if not decompressed'
-'################################################'
+# Decompress data if not decompressed
+################################################
 
 start_year = 1980
 last_year = 2019
@@ -97,8 +97,8 @@ for year in range(start_year, last_year + 1):
     path = data_path + '\\' + str(year) + '.tar'
     zip.decompress(path, decompressed_data_path + '\\' + str(year), stations['USAF'], year)
 
-'Analyse data for each station'
-'################################################'
+# Analyse data for each station
+################################################
 
 for station_id in country_stations:
     station_name = country_stations[station_id]
@@ -218,8 +218,8 @@ for station_id in country_stations:
 
 print('Finished stations study for ' + country)
 
-'Compare station data'
-'################################################'
+# Compare station data
+################################################
 
 for col in result_df.drop(['StartTemp', 'EndTemp', 'StartRain', 'EndRain'], axis=1):
     if 'Rain' in col:
@@ -234,8 +234,8 @@ for col in result_df.drop(['StartTemp', 'EndTemp', 'StartRain', 'EndRain'], axis
     plt.savefig(country_results_path + '\\National\\' + col + 'ByCity.jpg')
     plt.clf()
 
-'Plot a temperature map'
-'################################################'
+# Plot a temperature map
+################################################
 
 result_df['LAT'] = result_df.index.map(lambda x: stations.loc[stations['STATION NAME'] == x]['LAT'].iloc[0])
 result_df['LON'] = result_df.index.map(lambda x: stations.loc[stations['STATION NAME'] == x]['LON'].iloc[0])
@@ -273,8 +273,8 @@ plt.tight_layout()
 plt.savefig(country_results_path + '\\National\\' + 'Map.jpg')
 plt.clf()
 
-'Plot a humidex map'
-'################################################'
+# Plot a humidex map
+################################################
 
 fig = plt.gcf()
 
@@ -303,8 +303,8 @@ plt.tight_layout()
 plt.savefig(country_results_path + '\\National\\' + 'HumidexMap.jpg')
 plt.clf()
 
-'Plot a rain map'
-'################################################'
+# Plot a rain map
+################################################
 
 fig = plt.gcf()
 
@@ -333,8 +333,8 @@ plt.tight_layout()
 plt.savefig(country_results_path + '\\National\\' + 'MapRain.jpg')
 plt.clf()
 
-'Plot station names on a map'
-'################################################'
+# Plot station names on a map
+################################################
 
 fig = plt.gcf()
 fig.set_figheight(25)
@@ -362,8 +362,8 @@ plt.tight_layout()
 plt.savefig(country_results_path + '\\National\\' + 'Names.jpg')
 plt.clf()
 
-'Save five hottest cities result aside'
-'################################################'
+# Save five hottest cities result aside
+################################################
 
 top5 = result_df['HottestDayRise'].sort_values(ascending=False).index[0:5]
 
@@ -371,7 +371,7 @@ for city in top5:
     shutil.move(country_results_path + '\\Last5Years\\' + city + ' ' + 'Temp.jpg',
                 country_results_path + '\\Last5Years\\Top5\\' + city + ' ' + 'Temp.jpg')
 
-'Celebrate'
-'################################################'
+# Celebrate
+################################################
 
 print('Finished national study for ' + country)
